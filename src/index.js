@@ -102,7 +102,12 @@ app.post("/api/liked-businesses/like", async (req, res) => {
 
   try {
     const { rows } = await pool.query(
-      "INSERT INTO businesses_likes (business_id, liked_count, updated_at) VALUES ($1, 1, NOW()) ON CONFLICT (business_id) DO UPDATE SET liked_count = businesses_likes.liked_count + 1, updated_at = NOW() RETURNING *",
+      "INSERT INTO businesses_likes (business_id, liked_count, updated_at) " +
+        "VALUES ($1, 1, NOW()) " +
+        "ON CONFLICT (business_id) DO UPDATE SET " +
+        "liked_count = CASE WHEN businesses_likes.business_id = $1 THEN businesses_likes.liked_count + 1 ELSE businesses_likes.liked_count END, " +
+        "updated_at = CASE WHEN businesses_likes.business_id = $1 THEN NOW() ELSE businesses_likes.updated_at END " +
+        "RETURNING *",
       [business_id],
     );
     res.json(rows[0]);

@@ -29,7 +29,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 // const yelpApiKey = process.env.REACT_APP_YELP_API_KEY;
-const yelpApiKey = `rw2Ya9lwEheCXk1C7d_VD7rmpUGrchM6k91Nw8j1t5FU-gsz9Gd9G9igbYUse5SIPhEyDPKuVFUvStp8ctlVQLLS3ytHcOSKSvzWh_wbQHlFu9VUSoOhAEkhnJgYZXYx`;
+const yelpApiKey = `FO1b_vANnuxQT7hncdBmqWyxH0DLjoPu4jKuIPton0s-T8nF60qA_y6wwlf2u6e0GN2oaA2C83vkmQ4NeXv6MIwi0gF1pDsZWJkUmRwAm09Uz0Jum7AtHUx5ecMZZXYx`;
 
 app.get("/api/businesses/:cityName", async (req, res) => {
   const { cityName } = req.params;

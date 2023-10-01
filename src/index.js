@@ -102,7 +102,7 @@ app.post("/api/liked-businesses/like", async (req, res) => {
 
   try {
     const { rows } = await pool.query(
-      "INSERT INTO businesses_likes (business_id, liked_count) VALUES ($1, 1) ON CONFLICT (business_id) DO UPDATE SET liked_count = businesses_likes.liked_count + 1 RETURNING *",
+      "INSERT INTO businesses_likes (business_id, liked_count, updated_at) VALUES ($1, 1, NOW()) ON CONFLICT (business_id) DO UPDATE SET liked_count = businesses_likes.liked_count + 1, updated_at = NOW() RETURNING *",
       [business_id],
     );
     res.json(rows[0]);
@@ -118,7 +118,7 @@ app.post("/api/liked-businesses/unlike", async (req, res) => {
 
   try {
     const { rows } = await pool.query(
-      "UPDATE businesses_likes SET liked_count = businesses_likes.liked_count - 1 WHERE business_id = $1 RETURNING *",
+      "UPDATE businesses_likes SET liked_count = businesses_likes.liked_count - 1, updated_at = NOW() WHERE business_id = $1 RETURNING *",
       [business_id],
     );
     res.json(rows[0]);
@@ -127,6 +127,7 @@ app.post("/api/liked-businesses/unlike", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });

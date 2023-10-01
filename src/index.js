@@ -31,7 +31,7 @@ app.get("/api/businesses/:cityName", async (req, res) => {
   }
 });
 
-app.get("/api/businesses/:businessId", async (req, res) => {
+app.get("/api/businesses/:businessId/details", async (req, res) => {
   const { businessId } = req.params;
   try {
     const response = await axios.get(

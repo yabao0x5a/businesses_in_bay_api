@@ -101,22 +101,32 @@ app.post("/api/liked-businesses/like", async (req, res) => {
   const { business_id } = req.body;
 
   try {
-    const { rows } = await pool.query(
-      "INSERT INTO businesses_likes (business_id, liked_count, updated_at) " +
-        "VALUES ($1, 1, NOW()) " +
-        "ON CONFLICT (business_id) DO UPDATE SET " +
-        "liked_count = CASE WHEN businesses_likes.business_id = $1 THEN businesses_likes.liked_count + 1 ELSE businesses_likes.liked_count END, " +
-        "updated_at = CASE WHEN businesses_likes.business_id = $1 THEN NOW() ELSE businesses_likes.updated_at END " +
-        "RETURNING *",
+    // Check if the business_id exists in the table
+    const existingBusiness = await pool.query(
+      "SELECT * FROM businesses_likes WHERE business_id = $1",
       [business_id],
     );
-    res.json(rows[0]);
+
+    if (existingBusiness.rows.length === 0) {
+      // If business_id does not exist, insert a new row
+      const { rows } = await pool.query(
+        "INSERT INTO businesses_likes (business_id, liked_count, updated_at) VALUES ($1, 1, NOW()) RETURNING *",
+        [business_id],
+      );
+      res.json(rows[0]);
+    } else {
+      // If business_id exists, update the existing row
+      const { rows } = await pool.query(
+        "UPDATE businesses_likes SET liked_count = liked_count + 1, updated_at = NOW() WHERE business_id = $1 RETURNING *",
+        [business_id],
+      );
+      res.json(rows[0]);
+    }
   } catch (error) {
     console.error("Error liking a business:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
 // Unlike a business
 app.post("/api/liked-businesses/unlike", async (req, res) => {
   const { business_id } = req.body;

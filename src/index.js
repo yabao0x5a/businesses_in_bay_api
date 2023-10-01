@@ -103,21 +103,21 @@ app.post("/api/liked-businesses/like", async (req, res) => {
   try {
     // Check if the business_id exists in the table
     const existingBusiness = await pool.query(
-      "SELECT * FROM liked_businesses WHERE business_id = $1",
+      "SELECT * FROM businesses_likes WHERE business_id = $1",
       [business_id],
     );
 
     if (existingBusiness.rows.length === 0) {
       // If business_id does not exist, insert a new row
       const { rows } = await pool.query(
-        "INSERT INTO liked_businesses (business_id, liked_count, updated_at) VALUES ($1, 1, NOW()) RETURNING *",
+        "INSERT INTO businesses_likes (business_id, liked_count, updated_at) VALUES ($1, 1, NOW()) RETURNING *",
         [business_id],
       );
       res.json(rows[0]);
     } else {
       // If business_id exists, update the existing row
       const { rows } = await pool.query(
-        "UPDATE liked_businesses SET liked_count = liked_count + 1, updated_at = NOW() WHERE business_id = $1 RETURNING *",
+        "UPDATE businesses_likes SET liked_count = liked_count + 1, updated_at = NOW() WHERE business_id = $1 RETURNING *",
         [business_id],
       );
       res.json(rows[0]);

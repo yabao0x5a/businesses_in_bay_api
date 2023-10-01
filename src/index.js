@@ -19,7 +19,11 @@ const dbUri =
 // PostgreSQL database configuration
 const pool = new Pool({
   connectionString: dbUri,
+  ssl: {
+    rejectUnauthorized: false, // For development purposes only; should be handled differently in production
+  },
 });
+
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());

@@ -79,7 +79,7 @@ app.get("/api/businesses/:businessId/reviews", async (req, res) => {
 // Get liked businesses
 app.get("/api/liked-businesses", async (req, res) => {
   try {
-    const { rows } = await pool.query("SELECT * FROM liked_businesses");
+    const { rows } = await pool.query("SELECT * FROM businesses_likes");
     res.json(rows);
   } catch (error) {
     console.error("Error fetching liked businesses:", error);
@@ -93,7 +93,7 @@ app.post("/api/liked-businesses/like", async (req, res) => {
 
   try {
     const { rows } = await pool.query(
-      "INSERT INTO liked_businesses (business_id, liked_count) VALUES ($1, 1) ON CONFLICT (business_id) DO UPDATE SET liked_count = liked_businesses.liked_count + 1 RETURNING *",
+      "INSERT INTO businesses_likes (business_id, liked_count) VALUES ($1, 1) ON CONFLICT (business_id) DO UPDATE SET liked_count = businesses_likes.liked_count + 1 RETURNING *",
       [business_id],
     );
     res.json(rows[0]);
@@ -109,7 +109,7 @@ app.post("/api/liked-businesses/unlike", async (req, res) => {
 
   try {
     const { rows } = await pool.query(
-      "UPDATE liked_businesses SET liked_count = liked_businesses.liked_count - 1 WHERE business_id = $1 RETURNING *",
+      "UPDATE businesses_likes SET liked_count = businesses_likes.liked_count - 1 WHERE business_id = $1 RETURNING *",
       [business_id],
     );
     res.json(rows[0]);

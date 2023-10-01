@@ -2,9 +2,18 @@ const express = require("express");
 const cors = require("cors");
 const axios = require("axios");
 const bodyParser = require("body-parser");
+const { Pool } = require("pg");
 
 const app = express();
 const port = process.env.PORT || 5000;
+
+const pool = new Pool({
+  user: "hqugikqrtjkegi",
+  host: "ec2-52-45-200-167.compute-1.amazonaws.com",
+  database: "d2mrhpp8mj639a",
+  password: "cb8858680683862a5cd3ed175cdcb02d6a3ee7e4cf25230590d708d2fc2821cc",
+  port: 5432, // Default PostgreSQL port
+});
 
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -67,6 +76,48 @@ app.get("/api/businesses/:businessId/reviews", async (req, res) => {
   }
 });
 
+// Get liked businesses
+app.get("/api/liked-businesses", async (req, res) => {
+  try {
+    const { rows } = await pool.query("SELECT * FROM liked_businesses");
+    res.json(rows);
+  } catch (error) {
+    console.error("Error fetching liked businesses:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// Like a business
+app.post("/api/liked-businesses/like", async (req, res) => {
+  const { business_id } = req.body;
+
+  try {
+    const { rows } = await pool.query(
+      "INSERT INTO liked_businesses (business_id, liked_count) VALUES ($1, 1) ON CONFLICT (business_id) DO UPDATE SET liked_count = liked_businesses.liked_count + 1 RETURNING *",
+      [business_id],
+    );
+    res.json(rows[0]);
+  } catch (error) {
+    console.error("Error liking a business:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// Unlike a business
+app.post("/api/liked-businesses/unlike", async (req, res) => {
+  const { business_id } = req.body;
+
+  try {
+    const { rows } = await pool.query(
+      "UPDATE liked_businesses SET liked_count = liked_businesses.liked_count - 1 WHERE business_id = $1 RETURNING *",
+      [business_id],
+    );
+    res.json(rows[0]);
+  } catch (error) {
+    console.error("Error unliking a business:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });

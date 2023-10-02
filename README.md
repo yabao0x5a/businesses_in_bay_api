@@ -2,6 +2,10 @@
 
 Business in Bay(MVP) is a web application that allows users to explore and discover top businesses in different cities within the Bay Area. Users can view business details, read reviews, and like their favorite businesses.
 
+## Live Demo
+
+You can access a live demo of the project here: [Business in Bay Live Demo](https://mx3yjl.csb.app/)
+
 ## Features
 
 - View a list of top businesses in various Bay Area cities.

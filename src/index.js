@@ -15,7 +15,7 @@ const port = process.env.PORT || 5000;
 //   port: 5432, // Default PostgreSQL port
 // });
 const dbUri =
-  "postgres://hqugikqrtjkegi:cb8858680683862a5cd3ed175cdcb02d6a3ee7e4cf25230590d708d2fc2821cc@ec2-52-45-200-167.compute-1.amazonaws.com:5432/d2mrhpp8mj639a";
+  "postgres://jngxdfcymfqjnm:c7e6da8af9ac77ffd89bd7a2a88b9bf79452c68795ee4c218b84a9a7be3a3473@ec2-3-212-29-93.compute-1.amazonaws.com:5432/d7t93d89iucfkh";
 // PostgreSQL database configuration
 const pool = new Pool({
   connectionString: dbUri,
